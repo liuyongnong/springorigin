@@ -273,7 +273,8 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 				if (logger.isDebugEnabled()) {
 					logger.debug("Bean definition has already been processed as a configuration class: " + beanDef);
 				}
-			}//校验是不是一个配置类@Configuration注解所注释,是的话创建一个BeanDefinitionHolder并添加到configCandidates列表
+			}
+			//校验是不是一个配置类@Configuration注解所注释,是的话创建一个BeanDefinitionHolder并添加到configCandidates列表
 			else if (ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef, this.metadataReaderFactory)) {
 				configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));
 			}
@@ -284,7 +285,8 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			return;
 		}
 
-		// Sort by previously determined @Order value, if applicable,如果有多个@Configuration注解的配置类，则根据Order排序
+		// Sort by previously determined @Order value, if applicable
+		// 如果有多个@Configuration注解的配置类，则根据Order排序
 		configCandidates.sort((bd1, bd2) -> {
 			int i1 = ConfigurationClassUtils.getOrder(bd1.getBeanDefinition());
 			int i2 = ConfigurationClassUtils.getOrder(bd2.getBeanDefinition());
@@ -379,15 +381,19 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			Object configClassAttr = beanDef.getAttribute(ConfigurationClassUtils.CONFIGURATION_CLASS_ATTRIBUTE);
 			AnnotationMetadata annotationMetadata = null;
 			MethodMetadata methodMetadata = null;
-			if (beanDef instanceof AnnotatedBeanDefinition) { //判断bean是不是由注解定义的
+			if (beanDef instanceof AnnotatedBeanDefinition) {
+				//判断bean是不是由注解定义的
 				AnnotatedBeanDefinition annotatedBeanDefinition = (AnnotatedBeanDefinition) beanDef;
-				annotationMetadata = annotatedBeanDefinition.getMetadata();//获取该类注上的元数据，如@Configuration,@ComponentScan等类的注解
-				methodMetadata = annotatedBeanDefinition.getFactoryMethodMetadata(); //获取工厂方法的注解
+				annotationMetadata = annotatedBeanDefinition.getMetadata();
+				//获取该类注上的元数据，如@Configuration,@ComponentScan等类的注解
+				methodMetadata = annotatedBeanDefinition.getFactoryMethodMetadata();
+				//获取工厂方法的注解
 			}
 			if ((configClassAttr != null || methodMetadata != null) && beanDef instanceof AbstractBeanDefinition) {
 				// Configuration class (full or lite) or a configuration-derived @Bean method
 				// -> eagerly resolve bean class at this point, unless it's a 'lite' configuration
-				// or component class without @Bean methods. 如果是Configuration类或者configuration驱动的@Bean方法，需要在这里接入，除非是一个'lite' Configuration类，即proxyBeanMethods=false的Configuration类型
+				// or component class without @Bean methods
+				// 如果是Configuration类或者configuration驱动的@Bean方法，需要在这里接入，除非是一个'lite' Configuration类，即proxyBeanMethods=false的Configuration类型
 				AbstractBeanDefinition abd = (AbstractBeanDefinition) beanDef;
 				if (!abd.hasBeanClass()) {
 					boolean liteConfigurationCandidateWithoutBeanMethods =
@@ -404,7 +410,8 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 					}
 				}
 			}
-			if (ConfigurationClassUtils.CONFIGURATION_CLASS_FULL.equals(configClassAttr)) {//full模式和lite模式分别对应proxyBeanMethods的取值，默认是full模式，proxyBeanMethods为true,表示可代理
+			if (ConfigurationClassUtils.CONFIGURATION_CLASS_FULL.equals(configClassAttr)) {
+				//full模式和lite模式分别对应proxyBeanMethods的取值，默认是full模式，proxyBeanMethods为true,表示可代理
 				if (!(beanDef instanceof AbstractBeanDefinition)) {
 					throw new BeanDefinitionStoreException("Cannot enhance @Configuration bean definition '" +
 							beanName + "' since it is not stored in an AbstractBeanDefinition subclass");
@@ -435,7 +442,8 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 				if (logger.isTraceEnabled()) {
 					logger.trace(String.format("Replacing bean definition '%s' existing class '%s' with " +
 							"enhanced class '%s'", entry.getKey(), configClass.getName(), enhancedClass.getName()));
-				}//这里把原类替换为CGlib增强之后的类
+				}
+				//这里把原类替换为CGlib增强之后的类
 				beanDef.setBeanClass(enhancedClass);
 			}
 		}
