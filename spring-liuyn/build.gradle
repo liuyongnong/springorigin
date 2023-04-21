@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+}
+
+group 'org.springframework'
+version '5.2.22.RELEASE'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile(project(":spring-beans"))
+    compile(project(":spring-core"))
+    optional(project(":spring-aop"))
+    optional(project(":spring-context"))
+    testCompile(testFixtures(project(":spring-beans")))
+    testCompile(testFixtures(project(":spring-aop")))
+    testCompile(testFixtures(project(":spring-context")))
+    testCompile(testFixtures(project(":spring-core")))
+    testCompile("org.aspectj:aspectjweaver")
+    testCompile("org.hsqldb:hsqldb")
+    testRuntime("javax.xml.bind:jaxb-api")
+}
+
+test {
+    useJUnitPlatform()
+}
